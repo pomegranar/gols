@@ -34,6 +34,7 @@ var (
     extFlag             string
     excludeExtensions   bool
     excludedExts        []string
+    noRecurseDirs       []string
     onlyPermissions     bool
     showOwner           bool
     getTime             bool
@@ -493,6 +494,23 @@ func parseFlags(args []string) ([]string, bool, bool) {
                             fmt.Println("Missing value for -x")
                             os.Exit(1)
                         }
+                    case 'X':
+                        var value string
+                        if j+1 < len(arg) {
+                            value = arg[j+1:]
+                        } else if i+1 < len(args) {
+                            value = args[i+1]
+                            i++
+                        } else {
+                            fmt.Println("Missing value for -X")
+                            os.Exit(1)
+                        }
+                        for _, name := range strings.Split(value, ",") {
+                            if name = strings.TrimRight(strings.TrimSpace(name), "/"); name != "" {
+                                noRecurseDirs = append(noRecurseDirs, name)
+                            }
+                        }
+                        j = len(arg)
                     case 'd':
                         if j+1 < len(arg) && arg[j+1] >= '0' && arg[j+1] <= '9' {
                             depthValue := arg[j+1:]
@@ -566,6 +584,7 @@ func showHelp() {
     fmt.Println("	-t              Order by time")
     fmt.Println("	-v --version    Show version")
     fmt.Println("	-x              Exclude specific extensions")
+    fmt.Println("	-X dir[,dir]    Don't recurse into matching directories in tree listing (globs allowed)")
     fmt.Println()
 }
 
@@ -1148,6 +1167,15 @@ func printSummary(files []os.DirEntry, directory string) {
     fmt.Printf( "   TOTAL" + ":%s%d%s\n", brightGreen, total, reset)
 }
 
+func skipRecursion(name string) bool {
+    for _, pattern := range noRecurseDirs {
+        if matched, _ := filepath.Match(pattern, name); matched || pattern == name {
+            return true
+        }
+    }
+    return false
+}
+
 func printTree(path, prefix string, isLast bool, currentDepth, maxDepth int) (totalFiles, totalDirs int) {
     if maxDepth != -1 && currentDepth > maxDepth {
         return 0, 0
@@ -1191,7 +1219,9 @@ func printTree(path, prefix string, isLast bool, currentDepth, maxDepth int) (to
             }
         }
 
-        if file.IsDir() {
+        if file.IsDir() && skipRecursion(file.Name()) {
+            totalDirs++
+        } else if file.IsDir() {
             newPrefix := prefix
             if isLastFile {
                 newPrefix += "    "

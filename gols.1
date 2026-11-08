@@ -59,6 +59,9 @@ Show only hidden files.
 .B \-r
 List directories and files recursively tree-like.
 .TP
+.B \-X \fIdir[,dir]\fR
+In tree listing, show matching directories but do not recurse into them. Accepts glob patterns and can be repeated.
+.TP
 .B \-i
 Display the icons for directories on the left side.
 .TP
@@ -105,6 +108,9 @@ List all files recursively:
 .TP
 List all files recursively up to a depth of 2:
 .B gols \-rd 2
+.TP
+List all files recursively, without descending into .git or node_modules:
+.B gols \-ar \-X .git,node_modules
 
 .SH AUTHOR
 github.com/elbachir-one <bachiralfa@gmail.com>

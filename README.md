@@ -120,6 +120,7 @@ gols [FLAG] [DIRECTORY] [FILES]
 | -T   | show only the time                                           | ![image](https://i.postimg.cc/ZRr9DhjJ/T.png)                                                   |
 | -v   | version number                                               |                                                                                                 |
 | -x   | exclude files from the listing using there extention         | ![image](https://i.postimg.cc/90Cy41m1/x.png)                                                   |
+| -X   | tree listing: don't recurse into dirs (gols -ar -X .git,node_modules) |                                                                                        |
 
 ## Contributing
 
