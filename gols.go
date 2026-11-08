@@ -359,8 +359,6 @@ func printFilesInColumns(files []os.DirEntry, directory string, dirOnLeft bool, 
     }
 
     if showSummary {
-        fmt.Println()
-        fmt.Println()
         printSummary(files, directory)
     }
 }
@@ -635,7 +633,7 @@ func formatSize(size int64, humanReadable bool) string {
         case size >= KB:
             return fmt.Sprintf("%.2f KB", float64(size)/float64(KB))
         default:
-            return fmt.Sprintf("%d B", size)
+            return fmt.Sprintf("%d B ", size)
         }
     } else {
         switch {
@@ -648,7 +646,7 @@ func formatSize(size int64, humanReadable bool) string {
         case size >= KB:
             return fmt.Sprintf("%d KB", size)
         default:
-            return fmt.Sprintf("%d B", size)
+            return fmt.Sprintf("%d B ", size)
         }
     }
 }
@@ -877,7 +875,6 @@ func printLongListing(files []os.DirEntry, directory string, humanReadable bool)
     }
 
     if showSummary {
-        fmt.Println()
         printSummary(filteredFiles, directory)
     }
 }
@@ -1136,6 +1133,7 @@ func printSummary(files []os.DirEntry, directory string) {
         }
     }
 
+	fmt.Println()
     fmt.Printf(iconDirectory + " Directories: %s%d%s\n", blue, dirCount, reset)
     fmt.Printf(iconOther + " Files: %s%d%s\n", red, fileCount, reset)
 
@@ -1147,7 +1145,7 @@ func printSummary(files []os.DirEntry, directory string) {
     }
 
     total := dirCount + fileCount + symlinkDirCount + symlinkFileCount
-    fmt.Printf( "TOTAL" + ":%s%d%s\n", brightGreen, total, reset)
+    fmt.Printf( "   TOTAL" + ":%s%d%s\n", brightGreen, total, reset)
 }
 
 func printTree(path, prefix string, isLast bool, currentDepth, maxDepth int) (totalFiles, totalDirs int) {
